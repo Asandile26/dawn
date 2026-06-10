@@ -77,6 +77,15 @@
 
 /* base */
 
+/* Custom Override to remove Globo Menu vertical dividers */
+.globomm-item,
+.gm-menu-item,
+[class*='gm-menu-item'],
+[class*='globomm-item'] {
+  border-right: none !important;
+  border-left: none !important;
+}
+
 /* Target the submenu search form container specifically */
 div.gm-search-form {
   display: none !important;
