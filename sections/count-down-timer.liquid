@@ -1,0 +1,62 @@
+<div class="queue-container" 
+     id="QueueSection-{{ section.id }}" 
+     data-product-id="{{ section.settings.target_product.id }}">
+  
+  <div class="queue-card">
+    <h2 class="queue-title">{{ section.settings.id }}</h2>
+    <p class="queue-instructions">This item is in high demand. Join the line to secure your spot!</p>
+
+    <div id="QueueJoinState" class="queue-state">
+      <button id="JoinQueueBtn" class="button button--primary button--full-width">
+        Join the Line
+      </button>
+    </div>
+
+    <div id="QueueWaitState" class="queue-state hidden">
+      <div class="spinner"></div>
+      <p>Your current position in line:</p>
+      <div id="QueuePosition" class="queue-number">--</div>
+      <p class="queue-subtext">Please do not close or refresh this window.</p>
+    </div>
+
+    <div id="QueueUnlockedState" class="queue-state hidden">
+      <p class="success-message"> It's your turn!</p>
+      <a id="CheckoutBtn" href="/checkout" class="button button--success button--full-width">
+        Proceed to Secure Checkout
+      </a>
+    </div>
+  </div>
+</div>
+
+<style>
+  .queue-container { max-width: 500px; margin: 2rem auto; padding: 1.5rem; text-align: center; }
+  .queue-card { border: 1px solid #e1e1e1; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+  .queue-number { font-size: 3rem; font-weight: bold; color: #2c6ecb; margin: 1rem 0; }
+  .hidden { display: none !important; }
+  .success-message { color: #108043; font-weight: bold; }
+</style>
+
+{% schema %}
+  {
+    "name": "Queue Waiting Room",
+    "settings": [
+      {
+        "type": "text",
+        "id": "SALE",
+        "label": "Section Heading",
+        "default": "Flash Sale Waiting Room"
+      },
+      {
+        "type": "product",
+        "id": "target_product",
+        "label": "Product to Gate",
+        "info": "Select the high-traffic product that requires a queue."
+      }
+    ],
+    "presets": [
+      {
+        "name": "Queue Waiting Room"
+      }
+    ]
+  }
+  {% endschema %}

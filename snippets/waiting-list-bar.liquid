@@ -1,0 +1,179 @@
+{% comment %}
+  CONFIGURATION:
+  1. For Guests: It shows a countdown to a 'Global' date (set below).
+  2. For Logged-in Users: It shows their specific queue position.
+{% endcomment %}
+
+{% assign global_event_date = '2026-12-31' %}
+{% comment %} Set your main event date here {% endcomment %}
+
+<div id="waiting-list-sticky-bar">
+  <div class="wl-container">
+    <!-- LEFT SIDE: Countdown (Visible to All) -->
+    <div class="wl-section wl-timer-area">
+      <span class="wl-badge">Next Release</span>
+      <div id="wl-countdown-timer"></div>
+    </div>
+
+    <!-- RIGHT SIDE: Dynamic Info (Changes based on Login) -->
+    <div class="wl-section wl-user-status">
+      {% if customer %}
+        <div class="wl-status-logged-in">
+          <span class="wl-position-label">Your Position:</span>
+          <span class="wl-position-number">#{{ customer.metafields.waiting_list.position | default: 'Pending' }}</span>
+          <a href="/pages/preparation-checklist" class="wl-mini-link">Checklist →</a>
+        </div>
+      {% else %}
+        <div class="wl-status-guest">
+          <span>Want a spot?</span>
+          <a
+            href="{{routes.account_register_url}}"
+            class="wl-cta-btn"
+            >Join Waiting List</a
+          >
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<style>
+  #waiting-list-sticky-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: #000000;
+    color: #ffffff;
+    z-index: 99999;
+    padding: 12px 0;
+    border-bottom: 2px solid #00d1b2; /* Visual accent */
+  }
+
+  .wl-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .wl-section {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+
+  /* Countdown Styling */
+  .wl-badge {
+    background: #00d1b2;
+    color: #000;
+    padding: 3px 8px;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    border-radius: 3px;
+  }
+
+  #wl-countdown-timer {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1.1rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+  }
+
+  /* User Status Styling */
+  .wl-position-label {
+    font-size: 13px;
+    color: #ccc;
+  }
+
+  .wl-position-number {
+    color: #00d1b2;
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-right: 10px;
+  }
+
+  .wl-mini-link {
+    color: #fff;
+    text-decoration: underline;
+    font-size: 12px;
+  }
+
+  /* Guest Button */
+  .wl-cta-btn {
+    background: #fff;
+    color: #000;
+    padding: 5px 15px;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 4px;
+    margin-left: 10px;
+    transition: 0.3s;
+  }
+
+  .wl-cta-btn:hover {
+    background: #00d1b2;
+    color: #fff;
+  }
+
+  /* Prevent Theme Overlap */
+  body {
+    padding-top: 50px !important;
+  }
+
+  @media (max-width: 768px) {
+    .wl-container {
+      flex-direction: column;
+      gap: 8px;
+    }
+    body {
+      padding-top: 85px !important;
+    }
+    #wl-countdown-timer {
+      font-size: 0.9rem;
+    }
+  }
+</style>
+
+<script>
+  (function() {
+    // 1. Get the date. Priority: Customer specific date > Global date
+    {% if customer and customer.metafields.waiting_list.event_date %}
+      var targetDate = "{{ customer.metafields.waiting_list.event_date }}";
+    {% else %}
+      var targetDate = "{{ global_event_date }}";
+    {% endif %}
+
+    var countDownDate = new Date(targetDate).getTime();
+
+    var x = setInterval(function() {
+      var now = new Date().getTime();
+      var distance = countDownDate - now;
+
+       days = Math.floor(distance / (1000 * 60 * 60 * 24));
+       hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+       minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+     seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      // Add leading zeros
+      days = days < 10 ? "0" + days : days;
+      hours = hours < 10 ? "0" + hours : hours;
+      minutes = minutes < 10 ? "0" + minutes : minutes;
+      seconds = seconds < 10 ? "0" + seconds : seconds;
+
+      var timerElement = document.getElementById("wl-countdown-timer");
+      if(timerElement) {
+        timerElement.innerHTML = days + "d " + hours + "h " + minutes + "m " + seconds + "s";
+      }
+
+      if (distance < 0) {
+        clearInterval(x);
+        document.getElementById("wl-countdown-timer").innerHTML = "STARTING NOW";
+      }
+    }, 1000);
+  })();
+</script>
