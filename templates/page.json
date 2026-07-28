@@ -11,13 +11,23 @@
   "sections": {
     "main": {
       "type": "main-page",
+      "disabled": true,
       "settings": {
         "padding_top": 28,
         "padding_bottom": 28
       }
+    },
+    "waiting_room_j6djKb": {
+      "type": "waiting-room",
+      "name": "Waiting Room Section",
+      "settings": {
+        "heading": "You are on the list!",
+        "bg_color": "#ffffff"
+      }
     }
   },
   "order": [
-    "main"
+    "main",
+    "waiting_room_j6djKb"
   ]
 }
