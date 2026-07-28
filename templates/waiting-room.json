@@ -1,5 +1,4 @@
 {
-  "name": "Waiting Room Page",
   "sections": {
     "waiting_room_main": {
       "type": "waiting-room",
