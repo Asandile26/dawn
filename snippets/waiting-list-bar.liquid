@@ -20,7 +20,7 @@
         <div class="wl-status-logged-in">
           <span class="wl-position-label">Your Position:</span>
           <span class="wl-position-number">#{{ customer.metafields.waiting_list.position | default: 'Pending' }}</span>
-          <a href="/waiting-room" class="wl-mini-link">Waiting room</a>
+          <a href="/pages/waiting-room" class="wl-mini-link">Waiting room</a>
         </div>
       {% else %}
         <div class="wl-status-guest">
