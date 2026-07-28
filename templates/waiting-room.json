@@ -1,0 +1,9 @@
+{
+  "name": "Waiting List Page",
+  "sections": {
+    "main": {
+      "type": "waiting-room"
+    }
+  },
+  "order": ["main"]
+}
