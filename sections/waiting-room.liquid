@@ -1,0 +1,60 @@
+<section class="waiting-room-container" style="background-color: {{ section.settings.bg_color }};">
+  <h2>{{ section.settings.heading }}</h2>
+  
+  <!-- Rank Display (Dynamic) -->
+  <div class="rank-box">
+    <p>Your Position:</p>
+    <div id="customer-rank">Loading...</div>
+  </div>
+
+  <!-- Checklist (Loops through blocks defined in Shopify Admin) -->
+  <div class="checklist">
+    <h3>Pre-travel Checklist:</h3>
+    <ul>
+      {% for block in section.blocks %}
+        <li {{ block.shopify_attributes }}>
+          {{ block.settings.item_text }}
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Waiting Room",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "You are on the list!"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background Color",
+      "default": "#ffffff"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "checklist_item",
+      "name": "Checklist Item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "item_text",
+          "label": "Task",
+          "default": "Verify your passport"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Waiting Room Section"
+    }
+  ]
+}
+{% endschema %}

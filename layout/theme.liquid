@@ -36,17 +36,21 @@
       customElements.define('collection-component', StandardEvents.createViewEventElement());
       customElements.define(
         'product-component',
-        StandardEvents.createViewEventElement(HTMLElement, { defaultTrigger: 'intersect' }),
+        StandardEvents.createViewEventElement(HTMLElement, { defaultTrigger: 'intersect' })
       );
 
-      document.addEventListener('DOMContentLoaded', () => {
-        const template = document.querySelector('main[data-template]')?.dataset.template || '';
-        document.dispatchEvent(
-          new StandardEvents.PageViewEvent({
-            page: { template, title: document.title, url: window.location.href },
-          })
-        );
-      }, { once: true });
+      document.addEventListener(
+        'DOMContentLoaded',
+        () => {
+          const template = document.querySelector('main[data-template]')?.dataset.template || '';
+          document.dispatchEvent(
+            new StandardEvents.PageViewEvent({
+              page: { template, title: document.title, url: window.location.href },
+            })
+          );
+        },
+        { once: true }
+      );
     </script>
 
     <script src="{{ 'constants.js' | asset_url }}" defer="defer"></script>
@@ -319,9 +323,11 @@
         document.documentElement.classList.add('shopify-design-mode');
       }
     </script>
-  {%- render 'foxify-head' -%}</head>
+    {%- render 'foxify-head' -%}
+  </head>
 
-  <body class="gradient{% if settings.animations_hover_elements != 'none' %} animate--hover-{{ settings.animations_hover_elements }}{% endif %}">{% sections 'foxify-header-group' %}
+  <body class="gradient{% if settings.animations_hover_elements != 'none' %} animate--hover-{{ settings.animations_hover_elements }}{% endif %}">
+    {% sections 'foxify-header-group' %}
     <a class="skip-to-content-link button visually-hidden" href="#MainContent">
       {{ 'accessibility.skip_to_text' | t }}
     </a>
@@ -331,6 +337,7 @@
     {%- endif -%}
 
     {% sections 'header-group' %}
+    {% render 'waiting-list-bar' %}
 
     <main
       id="MainContent"
@@ -401,5 +408,7 @@
     {%- if settings.cart_type == 'drawer' -%}
       <script src="{{ 'cart-drawer.js' | asset_url }}" defer="defer"></script>
     {%- endif -%}
-  {%- render 'foxify-footer' -%}{% sections 'foxify-footer-group' %}</body>
+    {%- render 'foxify-footer' -%}
+    {% sections 'foxify-footer-group' %}
+  </body>
 </html>

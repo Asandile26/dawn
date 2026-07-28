@@ -15,13 +15,12 @@
       <div id="wl-countdown-timer"></div>
     </div>
 
-    <!-- RIGHT SIDE: Dynamic Info (Changes based on Login) -->
     <div class="wl-section wl-user-status">
       {% if customer %}
         <div class="wl-status-logged-in">
           <span class="wl-position-label">Your Position:</span>
           <span class="wl-position-number">#{{ customer.metafields.waiting_list.position | default: 'Pending' }}</span>
-          <a href="/pages/preparation-checklist" class="wl-mini-link">Checklist →</a>
+          <a href="{{sections.waiting-romm}}" class="wl-mini-link">Waiting room</a>
         </div>
       {% else %}
         <div class="wl-status-guest">
