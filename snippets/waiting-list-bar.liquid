@@ -14,22 +14,22 @@
       <span class="wl-badge">Next Release</span>
       <div id="wl-countdown-timer"></div>
     </div>
-
     <div class="wl-section wl-user-status">
       {% if customer %}
-        <div class="wl-status-logged-in">
-          <span class="wl-position-label">Your Position:</span>
-          <span class="wl-position-number">#{{ customer.metafields.waiting_list.position | default: 'Pending' }}</span>
-          <a href="/pages/waiting-room" class="wl-mini-link">Waiting room</a>
-        </div>
+        <!-- Clicking this whole box takes them to the detailed Waiting Room -->
+        <a href="/pages/waiting-room" style="text-decoration: none; color: inherit;">
+          <div class="wl-status-logged-in">
+            <span class="wl-position-label">Your Position:</span>
+            <span class="wl-position-number"
+              >#{{ customer.metafields.waiting_list.position | default: 'Pending' -}}
+            </span>
+            <div style="font-size: 10px; color: #666;">View Checklist →</div>
+          </div>
+        </a>
       {% else %}
         <div class="wl-status-guest">
           <span>Want a spot?</span>
-          <a
-            href="{{routes.account_register_url}}"
-            class="wl-cta-btn"
-            >Join Waiting List</a
-          >
+          <a href="{{routes.account_register_url}}" class="wl-cta-btn">Join Waiting List</a>
         </div>
       {% endif %}
     </div>
