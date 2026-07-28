@@ -19,5 +19,5 @@
       "block_order": ["item_1", "item_2"]
     }
   },
-  "order": ["waiting-room"]
+  "order": ["waiting_room_main"]
 }
