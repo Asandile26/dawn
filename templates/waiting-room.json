@@ -1,9 +1,23 @@
 {
-  "name": "Waiting List Page",
+  "name": "Waiting Room Page",
   "sections": {
-    "main": {
-      "type": "waiting-room"
+    "waiting_room_main": {
+      "type": "waiting-room",
+      "settings": {
+        "heading": "You are on the Travel list!"
+      },
+      "blocks": {
+        "item_1": {
+          "type": "checklist_item",
+          "settings": { "item_text": "Verify your passport" }
+        },
+        "item_2": {
+          "type": "checklist_item",
+          "settings": { "item_text": "Book travel insurance" }
+        }
+      },
+      "block_order": ["item_1", "item_2"]
     }
   },
-  "order": ["main"]
+  "order": ["waiting_room_main"]
 }
