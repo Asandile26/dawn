@@ -1,104 +1,442 @@
-<section class="waiting-room-container" style="background-color: {{ section.settings.bg_color }};">
-  <h2>{{ section.settings.heading }}</h2>
+{% comment %}
+  Section: waiting-room.liquid
+  All-in-one queue room combining progress tracking, travel intake, and readiness checklist.
+{% endcomment %}
 
-  <!-- Rank Display (Dynamic) -->
-  <div class="rank-box">
-    <p>Your Position:</p>
+<div class="waiting-room-container page-width">
+  <!-- Header & Live Status -->
+  <div class="waiting-room-header">
+    <span class="badge-live">LIVE QUEUE</span>
+    <h2>You're in line for your Travel Plan!</h2>
+    <p>Please keep this page open. Estimated wait: <strong id="queue-timer-text">02:00</strong></p>
+  </div>
 
-    <div id="customer-rank">
-      <div
-        class="progress"
-        role="progressbar"
-        aria-label="Example with label"
-        aria-valuenow="25"
-        aria-valuemin="0"
-        aria-valuemax="100"
-      >
-        <div class="progress-bar" style="width: 25%">25%</div>
-      </div>
+  <!-- 1. Progress Bar Component -->
+  <div class="queue-progress-wrapper">
+    <div class="progress-info-row">
+      <span>Queue Position: <strong id="queue-spot-text">#14 in line</strong></span>
+      <span id="queue-percent-text">10% Complete</span>
+    </div>
+
+    <div
+      class="custom-progress"
+      role="progressbar"
+      aria-label="Waiting Room Queue Progress"
+      aria-valuenow="10"
+      aria-valuemin="0"
+      aria-valuemax="100"
+    >
+      <div class="custom-progress-bar" id="waiting-room-progress-bar" style="width: 10%;"></div>
     </div>
   </div>
 
-  <!-- Checklist (Loops through blocks defined in Shopify Admin) -->
-  <div class="checklist">
-    <h3>Pre-travel Checklist:</h3>
-    <ul>
-      {% for block in section.blocks %}
-        <li {{ block.shopify_attributes }}>
-          {{ block.settings.item_text }}
-        </li>
-      {% endfor %}
-    </ul>
-  </div>
-</section>
+  <!-- Two-Column Layout for Information Gathering -->
+  <div class="waiting-room-grid">
+    <!-- 2. Travel Choices Profile -->
+    <div class="grid-card">
+      <div class="card-header">
+        <h3>📋 Step 1: Quick Travel Profile</h3>
+        <p>Tell us what you're looking for while you wait.</p>
+      </div>
+      <form id="travel-profile-form" onsubmit="return false;">
+        <div class="form-group">
+          <label class="group-label">Ideal Travel Vibe</label>
+          <div class="vibe-chips">
+            <label class="chip">
+              <input type="radio" name="travel_vibe" value="Relaxing" checked>
+              <span>🌴 Relaxing</span>
+            </label>
+            <label class="chip">
+              <input type="radio" name="travel_vibe" value="Adventure">
+              <span>⛰️ Adventure</span>
+            </label>
+            <label class="chip">
+              <input type="radio" name="travel_vibe" value="Culture">
+              <span>🏛️ Culture</span>
+            </label>
+          </div>
+        </div>
 
-<style>
+        <div class="form-group">
+          <label for="travel_budget" class="group-label">Target Budget (per person)</label>
+          <select id="travel_budget" name="travel_budget" class="select-input">
+            <option value="$1,000 - $2,500">$1,000 – $2,500</option>
+            <option value="$2,500 - $5,000" selected>$2,500 – $5,000</option>
+            <option value="$5,000+">$5,000+ (Luxury)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="travel_timeframe" class="group-label">Target Travel Window</label>
+          <select id="travel_timeframe" name="travel_timeframe" class="select-input">
+            <option value="Next 30 Days">Next 30 Days</option>
+            <option value="1-3 Months" selected>1 – 3 Months out</option>
+            <option value="4+ Months">4+ Months out</option>
+          </select>
+        </div>
+      </form>
+    </div>
+
+    <!-- 3. Standby Checklist -->
+    <div class="grid-card">
+      <div class="card-header">
+        <h3>⚡ Step 2: Get Ready to Claim</h3>
+        <p>Ensure you have these handy before your spot unlocks.</p>
+      </div>
+      <ul class="standby-list" id="standby-checklist">
+        <li>
+          <label class="check-item">
+            <input type="checkbox" data-key="passport">
+            <div>
+              <strong>Passport & Visa Requirements Checked</strong>
+              <span>Valid for 6+ months from departure date.</span>
+            </div>
+          </label>
+        </li>
+        <li>
+          <label class="check-item">
+            <input type="checkbox" data-key="payment">
+            <div>
+              <strong>Payment Method Ready</strong>
+              <span>Apple Pay, Google Pay, or Credit Card on hand.</span>
+            </div>
+          </label>
+        </li>
+        <li>
+          <label class="check-item">
+            <input type="checkbox" data-key="dates">
+            <div>
+              <strong>Travel Dates & Guests Confirmed</strong>
+              <span>Know exact passenger count before checking out.</span>
+            </div>
+          </label>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Primary Call To Action (Unlocks automatically) -->
+  <div class="checkout-bar">
+    <button id="queue-submit-btn" class="btn-checkout-disabled" disabled>🔒 Waiting for queue spot...</button>
+  </div>
+</div>
+
+{% style %}
   .waiting-room-container {
-    max-width: 600px;
+    max-width: 900px;
     margin: 40px auto;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 0 20px;
+    font-family: inherit;
+  }
+
+  .waiting-room-header {
     text-align: center;
-    font-family: sans-serif;
+    margin-bottom: 24px;
   }
-  .rank-box {
-    font-size: 2rem;
-    font-weight: bold;
-    color: #2c3e50;
-    margin: 20px 0;
+
+  .badge-live {
+    background-color: #fee2e2;
+    color: #dc2626;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 12px;
+    letter-spacing: 0.5px;
+  }
+
+  .waiting-room-header h2 {
+    margin: 12px 0 6px;
+    font-size: 1.75rem;
+    color: #0f172a;
+  }
+
+  .waiting-room-header p {
+    margin: 0;
+    color: #64748b;
+  }
+
+  /* Progress Bar */
+  .queue-progress-wrapper {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+  }
+
+  .progress-info-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.875rem;
+    color: #334155;
+    margin-bottom: 8px;
+  }
+
+  .custom-progress {
+    height: 14px;
+    background-color: #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .custom-progress-bar {
+    height: 100%;
+    background-color: #2563eb;
+    transition: width 0.4s ease-in-out;
+  }
+
+  /* Two Column Grid */
+  .waiting-room-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+
+  @media (max-width: 768px) {
+    .waiting-room-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .grid-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
     padding: 20px;
-    background: #f8f9fa;
-    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
   }
-  .checklist {
-    text-align: left;
-    background: #fff;
+
+  .card-header h3 {
+    margin: 0 0 4px;
+    font-size: 1.1rem;
+    color: #1e293b;
   }
-  .checklist ul {
+
+  .card-header p {
+    margin: 0 0 16px;
+    font-size: 0.85rem;
+    color: #64748b;
+  }
+
+  .form-group {
+    margin-bottom: 14px;
+  }
+
+  .group-label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 6px;
+  }
+
+  .vibe-chips {
+    display: flex;
+    gap: 8px;
+  }
+
+  .chip input {
+    display: none;
+  }
+
+  .chip span {
+    display: inline-block;
+    padding: 6px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 16px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    color: #475569;
+  }
+
+  .chip input:checked + span {
+    background-color: #2563eb;
+    color: #fff;
+    border-color: #2563eb;
+  }
+
+  .select-input {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 0.875rem;
+  }
+
+  /* Standby List */
+  .standby-list {
     list-style: none;
     padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
   }
-  .checklist li {
-    padding: 10px 0;
-    border-bottom: 1px solid #eee;
+
+  .check-item {
+    display: flex;
+    gap: 10px;
+    cursor: pointer;
   }
-</style>
+
+  .check-item input {
+    margin-top: 3px;
+    accent-color: #2563eb;
+  }
+
+  .check-item strong {
+    display: block;
+    font-size: 0.875rem;
+    color: #1e293b;
+  }
+
+  .check-item span {
+    font-size: 0.775rem;
+    color: #64748b;
+  }
+
+  /* CTA Bar */
+  .checkout-bar {
+    text-align: center;
+  }
+
+  .btn-checkout-disabled {
+    width: 100%;
+    padding: 16px;
+    background-color: #94a3b8;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    cursor: not-allowed;
+    transition: all 0.3s ease;
+  }
+
+  .btn-checkout-active {
+    width: 100%;
+    padding: 16px;
+    background-color: #16a34a;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    cursor: pointer;
+    animation: pulse 1.5s infinite;
+  }
+
+  @keyframes pulse {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.01);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+{% endstyle %}
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // 1. Storage Keys
+    const PROFILE_KEY = 'travel_queue_profile';
+    const CHECKLIST_KEY = 'travel_queue_checklist';
+
+    const progressBar = document.getElementById('waiting-room-progress-bar');
+    const progressText = document.getElementById('queue-percent-text');
+    const timerText = document.getElementById('queue-timer-text');
+    const spotText = document.getElementById('queue-spot-text');
+    const submitBtn = document.getElementById('queue-submit-btn');
+
+    // 2. Queue Simulation Logic (10% to 100%)
+    let currentProgress = 10;
+    let totalSeconds = 120; // 2 minute wait
+
+    const queueInterval = setInterval(() => {
+      if (currentProgress >= 100) {
+        clearInterval(queueInterval);
+        completeQueue();
+      } else {
+        currentProgress += 5;
+        totalSeconds -= 6;
+        updateQueueDisplay(currentProgress, totalSeconds);
+      }
+    }, 1000);
+
+    function updateQueueDisplay(progress, seconds) {
+      progressBar.style.width = progress + '%';
+      progressText.textContent = progress + '% Complete';
+
+      const mins = Math.floor(seconds / 60);
+      const secs = seconds % 60;
+      timerText.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+
+      const spotsLeft = Math.max(1, Math.ceil(15 * (1 - progress / 100)));
+      spotText.textContent = `#${spotsLeft} in line`;
+    }
+
+    function completeQueue() {
+      progressBar.style.width = '100%';
+      progressText.textContent = '100% Complete';
+      timerText.textContent = '00:00';
+      spotText.textContent = 'Spot unlocked!';
+
+      // Enable CTA
+      submitBtn.disabled = false;
+      submitBtn.className = 'btn-checkout-active';
+      submitBtn.innerHTML = '🎉 CLAIM YOUR SPOT & CHECKOUT NOW';
+    }
+
+    // 3. Save Form Profile
+    const profileForm = document.getElementById('travel-profile-form');
+    profileForm.addEventListener('change', function () {
+      const formData = new FormData(profileForm);
+      const data = {
+        vibe: formData.get('travel_vibe'),
+        budget: formData.get('travel_budget'),
+        timeframe: formData.get('travel_timeframe'),
+      };
+      localStorage.setItem(PROFILE_KEY, JSON.stringify(data));
+
+      // Update Shopify Cart attributes silently
+      fetch('/cart/update.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ attributes: data }),
+      }).catch(() => {});
+    });
+
+    // 4. Handle Standby Checklist State
+    const checkboxes = document.querySelectorAll('#standby-checklist input[type="checkbox"]');
+    checkboxes.forEach((box) => {
+      box.addEventListener('change', function () {
+        const state = {};
+        checkboxes.forEach((cb) => (state[cb.dataset.key] = cb.checked));
+        localStorage.setItem(CHECKLIST_KEY, JSON.stringify(state));
+      });
+    });
+
+    // 5. Submit Action -> Redirect to Checkout
+    submitBtn.addEventListener('click', function () {
+      if (!submitBtn.disabled) {
+        // Direct to cart or checkout URL
+        window.location.href = '/checkout';
+      }
+    });
+  });
+</script>
 
 {% schema %}
 {
   "name": "Waiting Room",
-  "settings": [
-    {
-      "type": "text",
-      "id": "heading",
-      "label": "Heading",
-      "default": "You are on the list!"
-    },
-    {
-      "type": "color",
-      "id": "bg_color",
-      "label": "Background Color",
-      "default": "#ffffff"
-    }
-  ],
-  "blocks": [
-    {
-      "type": "checklist_item",
-      "name": "Checklist Item",
-      "settings": [
-        {
-          "type": "text",
-          "id": "item_text",
-          "label": "Task",
-          "default": "Verify your passport"
-        }
-      ]
-    }
-  ],
+  "settings": [],
   "presets": [
     {
-      "name": "Waiting Room Section"
+      "name": "Waiting Room"
     }
   ]
 }
