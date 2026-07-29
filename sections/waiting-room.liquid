@@ -67,17 +67,17 @@
           <label for="travel_budget" class="group-label">Target Budget (per person)</label>
           <select id="travel_budget" name="travel_budget" class="select-input">
             {% comment %} Range: 1,000 to 2,500 {% endcomment %}
-            <option value="1000-2500">
+            <option class="budgets" value="1000-2500">
               {{ 100000 | money_without_trailing_zeros }} – {{ 250000 | money_without_trailing_zeros }}
             </option>
 
             {% comment %} Range: 2,500 to 5,000 {% endcomment %}
-            <option value="2500-5000" selected>
+            <option class="budgets" value="2500-5000" selected>
               {{ 250000 | money_without_trailing_zeros }} – {{ 500000 | money_without_trailing_zeros }}
             </option>
 
             {% comment %} Range: 5,000+ {% endcomment %}
-            <option value="5000+">{{ 500000 | money_without_trailing_zeros }}+ ({{ 'Luxury' }})</option>
+            <option class="budgets" value="5000+">{{ 500000 | money_without_trailing_zeros }}+ ({{ 'Luxury' }})</option>
           </select>
         </div>
       </form>
@@ -340,6 +340,10 @@
       transform: scale(1);
     }
   } */
+  .budgets {
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
 {% endstyle %}
 
 <script>
