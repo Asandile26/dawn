@@ -206,7 +206,7 @@
     border: 1px solid #e2e8f0;
     border-radius: 12px;
     padding: 20px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
   }
 
   .card-header h3 {
@@ -238,7 +238,9 @@
     gap: 8px;
   }
 
-  .chip input { display: none; }
+  .chip input {
+    display: none;
+  }
 
   .chip span {
     display: inline-block;
@@ -314,7 +316,7 @@
     transition: all 0.3s ease;
   }
 
-  .btn-checkout-active {
+  /* .btn-checkout-active {
     width: 100%;
     padding: 16px;
     background-color: #16a34a;
@@ -325,12 +327,18 @@
     font-weight: 600;
     cursor: pointer;
     animation: pulse 1.5s infinite;
-  }
+  } */
 
   @keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.01); }
-    100% { transform: scale(1); }
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.01);
+    }
+    100% {
+      transform: scale(1);
+    }
   }
 {% endstyle %}
 
