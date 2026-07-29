@@ -77,7 +77,9 @@
             </option>
 
             {% comment %} Range: 5,000+ {% endcomment %}
-            <option class="budgets" value="5000+">{{ 500000 | money_without_trailing_zeros }} + ({{ 'Luxury' }})</option>
+            <option class="budgets" value="5000+">
+              {{ 500000 | money_without_trailing_zeros }} + ({{ 'Luxury' }})
+            </option>
           </select>
         </div>
       </form>
@@ -246,9 +248,9 @@
 
   .chip span {
     display: inline-block;
-    padding: 8px 14px;
+    padding: 8px 16px;
     border: 1px solid #cbd5e1;
-    border-radius: 18px;
+    border-radius: 20px;
     font-size: 1.4rem;
     font-weight: 400;
     cursor: pointer;
